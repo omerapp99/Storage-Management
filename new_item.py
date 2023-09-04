@@ -1,5 +1,6 @@
-from tkinter import Entry, Label, Toplevel, Button, messagebox, END
-from tkinter.font import Font
+from tkinter import Toplevel, messagebox
+from ttkbootstrap.constants import *
+import ttkbootstrap as tb
 
 
 # New window, where you add new items.
@@ -7,60 +8,27 @@ class new(object):
     def __init__(self, listb1, f_array):
         top = Toplevel()
         top.title("New Item")
-        top.geometry("500x500")
+        top.geometry("500x300")
         top.resizable(False, False)
         top.iconbitmap("app.ico")
 
         # ~~ Item Name Start ~~
-        lb_name = Label(top)
-        ft = Font(family='Times', size=10)
-        lb_name["font"] = ft
-        lb_name["fg"] = "#333333"
-        lb_name["justify"] = "center"
-        lb_name["text"] = "Item Name:"
+        lb_name = tb.Label(top, text="Item Name:")
         lb_name.place(x=20, y=10, width=97, height=42)
-        en_name = Entry(top)
-        en_name["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        en_name["font"] = ft
-        en_name["fg"] = "#333333"
-        en_name["justify"] = "left"
-        en_name["text"] = "Name"
+        en_name = tb.Entry(top, text="Name:")
         en_name.place(x=120, y=20, width=350, height=30)
         # ~~ Item Name END ~~
 
         # ~~ Serial ID Start ~~
-        lb_serial = Label(top)
-        ft = Font(family='Times', size=10)
-        lb_serial["font"] = ft
-        lb_serial["fg"] = "#333333"
-        lb_serial["justify"] = "center"
-        lb_serial["text"] = "Serial ID:"
+        lb_serial = tb.Label(top, text="Serial ID:")
         lb_serial.place(x=30, y=160, width=70, height=25)
-        en_serial = Entry(top)
-        en_serial["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        en_serial["font"] = ft
-        en_serial["fg"] = "#333333"
-        en_serial["justify"] = "left"
-        en_serial["text"] = "serial"
+        en_serial = tb.Entry(top, text="Serial")
         en_serial.place(x=120, y=160, width=350, height=30)
 
         # ~~ Quantity Start ~~
-        lb_quan = Label(top)
-        ft = Font(family='Times', size=10)
-        lb_quan["font"] = ft
-        lb_quan["fg"] = "#333333"
-        lb_quan["justify"] = "center"
-        lb_quan["text"] = "Quantity:"
+        lb_quan = tb.Label(top, text="Quantity")
         lb_quan.place(x=30, y=90, width=70, height=25)
-        en_quan = Entry(top)
-        en_quan["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        en_quan["font"] = ft
-        en_quan["fg"] = "#333333"
-        en_quan["justify"] = "left"
-        en_quan["text"] = "Quantity"
+        en_quan = tb.Entry(top, text="Quantity")
         en_quan.place(x=120, y=90, width=350, height=30)
         # ~~ Quantity End ~~
         self.top = top
@@ -69,10 +37,7 @@ class new(object):
         self.en_name = en_name
         self.listb1 = listb1
         self.item_list = f_array
-        self.btn1 = Button(top, command=lambda: new.on_closing(self))
-        ft = Font(family='Times', size=10)
-        self.btn1["fg"] = "#333333"
-        self.btn1["text"] = "Add Item"
+        self.btn1 = tb.Button(top, text="Add Item", command=lambda: new.on_closing(self), bootstyle="outline-success")
         self.btn1.place(x=210, y=200, width=100)
         # ~~ Serial ID END ~~
 
@@ -89,16 +54,24 @@ class new(object):
             "serial": self.en_serial.get(),
             "quantity": self.en_quan.get()
         }
-        dic_copy = self.item.copy()
-        self.item_list.append(dic_copy)
-        #        item_list_globel = self.f_array
-        self.listb1.insert(END, self.item["name"])
-        print(self.item_list)
+        quancheck = self.item.get("quantity")
+        #if not any(self.item.values()):
+        if not self.item["name"]:
+            print("EMPTY")
+            messagebox.showerror("Error", "Item name and Quantity are needed for the new item", parent=self.top)
+        elif str.isdigit(quancheck):
+            dic_copy = self.item.copy()
+            self.item_list.append(dic_copy)
+            self.listb1.insert(END, self.item["name"])
+            print(self.item_list)
 
-        # Clear the entries
-        self.en_name.delete(0, 'end')
-        self.en_quan.delete(0, 'end')
-        self.en_serial.delete(0, 'end')
+            # Clear the entries
+            self.en_name.delete(0, 'end')
+            self.en_quan.delete(0, 'end')
+            self.en_serial.delete(0, 'end')
+        else:
+            print("Quan need to be number")
+            messagebox.showerror("Error", "Quantity need to be number", parent=self.top)
 
     # Popup window when saving item
     def on_closing(self):
@@ -112,11 +85,24 @@ class new(object):
             "serial": self.txt_serial.get("1.0", "end-1c"),
             "quantity": self.txt_quan.get("1.0", "end-1c")
         }
-        self.item_list[self.dict_id] = self.dict_data
-        print(self.item_list)
-        for i in self.listb1.curselection():
-            self.listb1.delete(i)
-            self.listb1.insert(i, self.txt_name.get("1.0", "end-1c"))
+        try:
+            self.item_list[self.dict_id] = self.dict_data
+            print(self.item_list)
+            for i in self.listb1.curselection():
+                self.listb1.delete(i)
+                self.listb1.insert(i, self.txt_name.get("1.0", "end-1c"))
+        except:
+            print("No item has been selected")
+
+    def delete_item(self):
+        selection = self.listb1.curselection()
+        if selection:
+            del self.item_list[self.dict_id]
+            print(self.item_list)
+            for i in self.listb1.curselection():
+                self.listb1.delete(i)
+        else:
+            print("No item has been selected")
 
     # Receive the selected item data
     def on_select(self):
@@ -124,8 +110,6 @@ class new(object):
         for i in self.listb1.curselection():
             self.dict_id = str(self.listb1.curselection())
             self.dict_id = int(self.dict_id[1:2])
-            #            self.list_data = list_data = new.get_item_list(self)
-
             self.dict_data = self.item_list[self.dict_id]
 
             # Name

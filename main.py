@@ -1,7 +1,7 @@
-import time
-from tkinter import Tk, Button, Label, Text, END, Menu, Listbox, messagebox
+from tkinter import  Menu, Listbox, messagebox
+from ttkbootstrap.constants import *
+import ttkbootstrap as tb
 from tkinter.filedialog import askopenfilename, asksaveasfilename
-from tkinter.font import Font
 import online_report, pickle, threading
 from new_item import new
 
@@ -21,6 +21,7 @@ class App:
         window.geometry("700x700")
         window.resizable(False, False)
         window.iconbitmap("app.ico")
+
         # ~~ Menu window components START ~~
         self.item_list = f_array
         menu = Menu(window)
@@ -32,83 +33,45 @@ class App:
         menu.add_cascade(label="File", menu=menu_item)
         window.config(menu=menu)
 
-        lbl1 = Label(window, text="Item list:")
+        lbl1 = tb.Label(window, text="Item list:", bootstyle="info")
         lbl1.place(x=5, y=8)
 
-        self.listb1 = listb1 = Listbox(window, width=32, height=40, selectmode="single", )
+        self.listb1 = listb1 = Listbox(window, width=32, height=40, selectmode="single", exportselection=False)
         self.listb1.place(x=5, y=34)
 
         #       ~~~ Item Name ~~~
-        self.txt_name = Text(window)
-        self.txt_name["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.txt_name["font"] = ft
-        self.txt_name["fg"] = "#333333"
+        self.txt_name = tb.Text(window)
         self.txt_name.place(x=310, y=34, width=350, height=30)
-        self.lbl_itname = Label(window, text="Name: ")
-        self.lbl_itname["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.lbl_itname["font"] = ft
-        self.lbl_itname["fg"] = "#333333"
+        self.lbl_itname = tb.Label(window, text="Name: ", bootstyle="info")
         self.lbl_itname.place(x=220, y=34)
 
-        self.txt_quan = Text(window)
-        self.txt_quan["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.txt_quan["font"] = ft
-        self.txt_quan["fg"] = "#333333"
+        self.txt_quan = tb.Text(window)
         self.txt_quan.place(x=310, y=74, width=350, height=30)
-        self.lbl_quan = Label(window, text="Quantity: ")
-        self.lbl_quan["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.lbl_quan["font"] = ft
-        self.lbl_quan["fg"] = "#333333"
+        self.lbl_quan = tb.Label(window, text="Quantity: ", bootstyle="info")
         self.lbl_quan.place(x=220, y=74)
 
-        self.txt_serial = Text(window)
-        self.txt_serial["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.txt_serial["font"] = ft
-        self.txt_serial["fg"] = "#333333"
+        self.txt_serial = tb.Text(window)
         self.txt_serial.place(x=310, y=114, width=350, height=30)
-        self.lbl_serial = Label(window, text="Serial Number: ")
-        self.lbl_serial["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.lbl_serial["font"] = ft
-        self.lbl_serial["fg"] = "#333333"
+        self.lbl_serial = tb.Label(window, text="Serial Number: ", bootstyle="info")
         self.lbl_serial.place(x=220, y=114)
 
-        #       Select the item
-        self.btn_select = Button(window, text="Select Item", command=lambda: new.on_select(self))
-        self.btn_select["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        self.btn_select["font"] = ft
-        self.btn_select["fg"] = "#333333"
-        self.btn_select.place(x=310, y=154, width=350, height=30)
-
         #       Update Item
-        btn_update = Button(window, text="Update Item", command=lambda: new.update_item(self))
-        btn_update["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        btn_update["font"] = ft
-        btn_update["fg"] = "#333333"
+        btn_update = tb.Button(window, text="Update Item", command=lambda: new.update_item(self),
+                               bootstyle="outline-success")
         btn_update.place(x=310, y=194, width=350, height=30)
 
+        #       Delete Item
+        btn_delete = tb.Button(window, text="Delete Item", command=lambda: new.delete_item(self),
+                               bootstyle="outline-danger")
+        btn_delete.place(x=310, y=234, width=350, height=30)
+
         #       Import Items
-        btn_import = Button(window, text="Import", command=lambda: self.import_item())
-        btn_import["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        btn_import["font"] = ft
-        btn_import["fg"] = "#333333"
-        btn_import.place(x=310, y=234, width=350, height=30)
+        btn_import = tb.Button(window, text="Import", command=lambda: self.import_item(), bootstyle="outline-success")
+        btn_import.place(x=310, y=274, width=350, height=30)
 
         #       Export Items
-        btn_export = Button(window, text="Export", command=lambda: self.export_item())
-        btn_export["borderwidth"] = "1px"
-        ft = Font(family='Times', size=10)
-        btn_export["font"] = ft
-        btn_export["fg"] = "#333333"
-        btn_export.place(x=310, y=274, width=350, height=30)
+        btn_export = tb.Button(window, text="Export", command=lambda: self.export_item(), bootstyle="outline-success")
+        btn_export.place(x=310, y=314, width=350, height=30)
         # ~~ Main window components End ~~
 
         #       Thread for the website updates, everytime that the user reload the page the user receive the data.
@@ -116,28 +79,37 @@ class App:
         t.daemon = True
         t.start()
 
+        def callback(event):
+            new.on_select(self)
 
+        self.listb1.bind("<<ListboxSelect>>", callback)
 
     # Import and Export Items Functions.
     def export_item(self):
-        path = asksaveasfilename(defaultextension='.pickle', filetypes=[("Pickle Files", "*.pickle")])
-        print(path)
-        with open(path, 'wb') as fp:
-            pickle.dump(self.item_list, fp)
+        try:
+            path = asksaveasfilename(defaultextension='.pickle', filetypes=[("Pickle Files", "*.pickle")])
+            print(path)
+            with open(path, 'wb') as fp:
+                pickle.dump(self.item_list, fp)
+        except:
+            print("Use canceled the export")
 
     def import_item(self):
-        path = askopenfilename(filetypes=[("Pickle Files", "*.pickle")])
-        with open(path, 'rb') as fb:
-            n_list = pickle.load(fb)
-            self.item_list = n_list
-            self.listb1.delete(0, END)
-            item_count = int(len(self.item_list))
-            for i in range(item_count):
-                self.listb1.insert(END, self.item_list[i]["name"])
+        try:
+            path = askopenfilename(filetypes=[("Pickle Files", "*.pickle")])
+            with open(path, 'rb') as fb:
+                n_list = pickle.load(fb)
+                self.item_list = n_list
+                self.listb1.delete(0, END)
+                item_count = int(len(self.item_list))
+                for i in range(item_count):
+                    self.listb1.insert(END, self.item_list[i]["name"])
+        except:
+            print("User canceled the import")
 
 
 if __name__ == "__main__":
-    window = Tk()
+    window = tb.Window(themename="darkly")
     app = App(window)
-    # window.protocol('WM_DELETE_WINDOW', stop_prog)
     window.mainloop()
+
