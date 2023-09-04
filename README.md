@@ -9,6 +9,7 @@ Using the GUI:
 * Adding Items
 * Updating count
 * Changing names
+
 ![image](https://github.com/omerapp99/Storage-Management/assets/29839037/52a7f1d8-5ee3-44f5-9af6-ab9e44719abf)
 
 
