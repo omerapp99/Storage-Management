@@ -11,7 +11,7 @@ Using the GUI:
 * Changing names
 * Import and export data
 
-![image](https://github.com/omerapp99/Storage-Management/assets/29839037/1df5bda9-4659-43ab-84e7-1e1ec7c18938)
+![image](https://github.com/omerapp99/Storage-Management/assets/29839037/4dd4f607-7530-43af-a267-19defddda084)
 
 
 
@@ -22,6 +22,9 @@ Using the Web interface:
 ![image](https://github.com/omerapp99/Storage-Management/assets/29839037/76311519-da53-469d-854e-5d6cf98c358a)
 
 
-TODO:
-- Adding the option to totaly delete an item.
-- Few code updates
+Changes:
+- Removed the select button, from now each item will be selected from the list.
+- Finally added the option to delete items!
+- Done changes for the UI, for much nicer look.
+- Added validation for new items.
+- Removed a lot of useless lines
