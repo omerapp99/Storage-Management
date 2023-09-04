@@ -18,6 +18,7 @@ Using the GUI:
 Using the Web interface:
 * Getting the total item quantity (Total Item Quantity).
 * Getting how many diffent items you have (Item Quantity).
+
 ![image](https://github.com/omerapp99/Storage-Management/assets/29839037/76311519-da53-469d-854e-5d6cf98c358a)
 
 
